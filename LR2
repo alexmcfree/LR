@@ -1,0 +1,219 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("=== ВЫБОР ЗАДАНИЯ ===");
+            Console.WriteLine("1. Проверка вхождения цифры в число");
+            Console.WriteLine("2. Перевернуть число");
+            Console.WriteLine("3. Проверка на число Фибоначчи");
+            Console.WriteLine("0. Выход");
+            Console.WriteLine("==========================");
+            Console.Write("Ваш выбор: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int choice))
+            {
+                Console.WriteLine("Ошибка ввода! Нажмите любую клавишу...");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (choice == 0)
+            {
+                Console.WriteLine("Выход из программы.");
+                break;
+            }
+
+            Console.Clear();
+
+            switch (choice)
+            {
+                case 1:
+                    CheckDigitInNumber();
+                    break;
+                case 2:
+                    ReverseNumber();
+                    break;
+                case 3:
+                    CheckFibonacciNumber();
+                    break;
+                default:
+                    Console.WriteLine("Неверный выбор! Введите число от 0 до 3.");
+                    Console.ReadKey();
+                    break;
+            }
+
+            // Пауза перед возвратом в меню
+            Console.WriteLine("\nНажмите любую клавишу для возврата в меню...");
+            Console.ReadKey();
+        }
+    }
+
+    // Задача 1: Проверка вхождения цифры в число
+    static void CheckDigitInNumber()
+    {
+        Console.WriteLine("=== Проверка вхождения цифры в число ===");
+        Console.WriteLine("Введите целое число:");
+
+        if (!long.TryParse(Console.ReadLine(), out long number))
+        {
+            Console.WriteLine("Ошибка: введите корректное целое число!");
+            return;
+        }
+
+        Console.WriteLine("Введите цифру для проверки (0-9):");
+
+        if (!int.TryParse(Console.ReadLine(), out int digit) || digit < 0 || digit > 9)
+        {
+            Console.WriteLine("Ошибка: введите одну цифру от 0 до 9!");
+            return;
+        }
+
+        long tempNumber = Math.Abs(number);
+        bool containsDigit = false;
+        int count = 0;
+
+        if (tempNumber == 0 && digit == 0)
+        {
+            containsDigit = true;
+            count = 1;
+        }
+        else
+        {
+            while (tempNumber > 0)
+            {
+                int currentDigit = (int)(tempNumber % 10);
+                if (currentDigit == digit)
+                {
+                    containsDigit = true;
+                    count++;
+                }
+                tempNumber /= 10;
+            }
+        }
+
+        Console.WriteLine("\nРезультат:");
+        Console.WriteLine($"Число: {number}");
+        Console.WriteLine($"Искомая цифра: {digit}");
+
+        if (containsDigit)
+        {
+            Console.WriteLine($"Цифра {digit} входит в число {number}");
+            Console.WriteLine($"Количество вхождений: {count}");
+        }
+        else
+        {
+            Console.WriteLine($"Цифра {digit} НЕ входит в число {number}");
+        }
+    }
+
+    // Задача 2: Перевернуть число
+    static void ReverseNumber()
+    {
+        Console.WriteLine("=== Перевернуть число ===");
+        Console.WriteLine("Введите целое число:");
+
+        if (!long.TryParse(Console.ReadLine(), out long number))
+        {
+            Console.WriteLine("Ошибка: введите корректное целое число!");
+            return;
+        }
+
+        bool isNegative = number < 0;
+        long tempNumber = Math.Abs(number);
+        long reversedNumber = 0;
+
+        if (tempNumber == 0)
+        {
+            reversedNumber = 0;
+        }
+        else
+        {
+            while (tempNumber > 0)
+            {
+                int digit = (int)(tempNumber % 10);
+                reversedNumber = reversedNumber * 10 + digit;
+                tempNumber /= 10;
+            }
+
+            if (isNegative)
+            {
+                reversedNumber = -reversedNumber;
+            }
+        }
+
+        Console.WriteLine("\nРезультат:");
+        Console.WriteLine($"Исходное число: {number}");
+        Console.WriteLine($"Перевернутое число: {reversedNumber}");
+    }
+
+    // Задача 3: Проверка на число Фибоначчи
+    static void CheckFibonacciNumber()
+    {
+        Console.WriteLine("=== Проверка на число Фибоначчи ===");
+        Console.WriteLine("Введите целое неотрицательное число:");
+
+        if (!ulong.TryParse(Console.ReadLine(), out ulong number))
+        {
+            Console.WriteLine("Ошибка: введите корректное неотрицательное целое число!");
+            return;
+        }
+
+        bool isFibonacci = false;
+        ulong position = 0;
+
+        if (number == 0)
+        {
+            isFibonacci = true;
+            position = 0;
+        }
+        else if (number == 1)
+        {
+            isFibonacci = true;
+            position = 1;
+        }
+        else
+        {
+            ulong a = 0, b = 1;
+            position = 1;
+
+            while (b < number)
+            {
+                ulong temp = a + b;
+                a = b;
+                b = temp;
+                position++;
+            }
+
+            isFibonacci = (b == number);
+        }
+
+        Console.WriteLine("\nРезультат:");
+        Console.WriteLine($"Проверяемое число: {number}");
+
+        if (isFibonacci)
+        {
+            Console.WriteLine($"Число {number} является числом Фибоначчи");
+            Console.WriteLine($"Его позиция в последовательности: F{position}");
+        }
+        else
+        {
+            Console.WriteLine($"Число {number} не является числом Фибоначчи");
+
+            // Находим ближайшие числа Фибоначчи
+            ulong a = 0, b = 1;
+            while (b < number)
+            {
+                ulong temp = a + b;
+                a = b;
+                b = temp;
+            }
+
+            Console.WriteLine($"Ближайшие числа Фибоначчи: {a} и {b}");
+        }
+    }
+}
