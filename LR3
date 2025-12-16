@@ -1,0 +1,463 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("===ВЫБОР ЗАДАЧИ===");
+            Console.WriteLine("1. Сумма произведений");
+            Console.WriteLine("2. Двойной факториал n!!");
+            Console.WriteLine("3. Числа Армстронга на отрезке");
+            Console.WriteLine("4. Дружественные числа на отрезке");
+            Console.WriteLine("5. Вычисление x^n");
+            Console.WriteLine("6. Счастливые билеты");
+            Console.WriteLine("7. N-е число Фибоначчи");
+            Console.WriteLine("8. Схема Горнера");
+            Console.WriteLine("0. Выход");
+            Console.WriteLine("================================");
+            Console.Write("Ваш выбор: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int choice))
+            {
+                Console.WriteLine("Ошибка ввода! Нажмите любую клавишу...");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (choice == 0)
+            {
+                Console.WriteLine("Выход из программы.");
+                break;
+            }
+
+            Console.Clear();
+
+            switch (choice)
+            {
+                case 1:
+                    Task1();
+                    break;
+                case 2:
+                    Task2();
+                    break;
+                case 3:
+                    Task3();
+                    break;
+                case 4:
+                    Task4();
+                    break;
+                case 5:
+                    Task5();
+                    break;
+                case 6:
+                    Task6();
+                    break;
+                case 7:
+                    Task7();
+                    break;
+                case 8:
+                    Task8();
+                    break;
+                default:
+                    Console.WriteLine("Неверный выбор! Введите число от 0 до 8.");
+                    break;
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для возврата в меню...");
+            Console.ReadKey();
+        }
+    }
+
+    // Задача 1: Сумма произведений
+    static void Task1()
+    {
+        Console.WriteLine("Задача 1: Вычислить сумму 1*2 + 2*3*4 + ... + n*(n+1)*...*(2n)");
+        Console.Write("Введите натуральное число n: ");
+
+        if (!int.TryParse(Console.ReadLine(), out int n) || n <= 0)
+        {
+            Console.WriteLine("Ошибка: введите натуральное число!");
+            return;
+        }
+
+        long totalSum = 0;
+
+        for (int i = 1; i <= n; i++)
+        {
+            long product = 1;
+            for (int j = i; j <= 2 * i; j++)
+            {
+                product *= j;
+            }
+            totalSum += product;
+
+            Console.WriteLine($"Слагаемое {i}: {i}*...*{2 * i} = {product}");
+        }
+
+        Console.WriteLine($"\nОбщая сумма: {totalSum}");
+    }
+
+    // Задача 2: Двойной факториал
+    static void Task2()
+    {
+        Console.WriteLine("Задача 2: Вычислить двойной факториал n!!");
+        Console.Write("Введите натуральное число n: ");
+
+        if (!int.TryParse(Console.ReadLine(), out int n) || n <= 0)
+        {
+            Console.WriteLine("Ошибка: введите натуральное число!");
+            return;
+        }
+
+        long doubleFactorial = 1;
+
+        if (n % 2 == 0) // четное
+        {
+            for (int i = 2; i <= n; i += 2)
+            {
+                doubleFactorial *= i;
+                Console.WriteLine($"Текущее произведение: {doubleFactorial} (добавлено {i})");
+            }
+        }
+        else // нечетное
+        {
+            for (int i = 1; i <= n; i += 2)
+            {
+                doubleFactorial *= i;
+                Console.WriteLine($"Текущее произведение: {doubleFactorial} (добавлено {i})");
+            }
+        }
+
+        Console.WriteLine($"\nРезультат: {n}!! = {doubleFactorial}");
+    }
+
+    // Задача 3: Числа Армстронга
+    static void Task3()
+    {
+        Console.WriteLine("Задача 3: Найти все числа Армстронга на отрезке [a, b]");
+        Console.WriteLine("Число Армстронга: сумма кубов цифр равна самому числу");
+        Console.WriteLine("Пример: 153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27");
+
+        Console.Write("Введите начало отрезка a: ");
+        if (!int.TryParse(Console.ReadLine(), out int a) || a < 0)
+        {
+            Console.WriteLine("Ошибка: введите неотрицательное число!");
+            return;
+        }
+
+        Console.Write("Введите конец отрезка b: ");
+        if (!int.TryParse(Console.ReadLine(), out int b) || b < a)
+        {
+            Console.WriteLine("Ошибка: b должно быть больше или равно a!");
+            return;
+        }
+
+        Console.WriteLine($"\nЧисла Армстронга на отрезке [{a}, {b}]:");
+        int count = 0;
+
+        for (int number = a; number <= b; number++)
+        {
+            int sum = 0;
+            int temp = number;
+            int digits = 0;
+
+            // Считаем количество цифр
+            while (temp > 0)
+            {
+                digits++;
+                temp /= 10;
+            }
+
+            temp = number;
+            while (temp > 0)
+            {
+                int digit = temp % 10;
+                int power = 1;
+
+                // digit^digits с использованием цикла for
+                for (int i = 0; i < digits; i++)
+                {
+                    power *= digit;
+                }
+
+                sum += power;
+                temp /= 10;
+            }
+
+            if (sum == number)
+            {
+                Console.WriteLine($"  {number}");
+                count++;
+
+                // Показываем проверку для наглядности
+                temp = number;
+                Console.Write($"    Проверка: {number} = ");
+                bool first = true;
+                while (temp > 0)
+                {
+                    int digit = temp % 10;
+                    if (!first) Console.Write(" + ");
+                    Console.Write($"{digit}^{digits}");
+                    first = false;
+                    temp /= 10;
+                }
+                Console.WriteLine();
+            }
+        }
+
+        if (count == 0)
+        {
+            Console.WriteLine("  Числа Армстронга не найдены");
+        }
+        else
+        {
+            Console.WriteLine($"\nВсего найдено чисел: {count}");
+        }
+    }
+
+    // Задача 4: Дружественные числа
+    static void Task4()
+    {
+        Console.WriteLine("Задача 4: Найти все пары дружественных чисел на отрезке [a, b]");
+        Console.WriteLine("Два числа дружественные, если сумма делителей каждого (без самого числа) равна другому");
+        Console.WriteLine("Пример: 220 и 284");
+
+        Console.Write("Введите начало отрезка a: ");
+        if (!int.TryParse(Console.ReadLine(), out int a) || a <= 1)
+        {
+            Console.WriteLine("Ошибка: a должно быть больше 1!");
+            return;
+        }
+
+        Console.Write("Введите конец отрезка b: ");
+        if (!int.TryParse(Console.ReadLine(), out int b) || b < a)
+        {
+            Console.WriteLine("Ошибка: b должно быть больше или равно a!");
+            return;
+        }
+
+        Console.WriteLine($"\nПары дружественных чисел на отрезке [{a}, {b}]:");
+        bool[,] checkedPairs = new bool[b + 1, b + 1];
+        int pairCount = 0;
+
+        for (int num1 = a; num1 <= b; num1++)
+        {
+            // Вычисляем сумму делителей для num1
+            int sum1 = 0;
+            for (int i = 1; i <= num1 / 2; i++)
+            {
+                if (num1 % i == 0)
+                {
+                    sum1 += i;
+                }
+            }
+
+            // Проверяем, является ли sum1 дружественным числом для num1
+            if (sum1 >= a && sum1 <= b && sum1 != num1)
+            {
+                // Вычисляем сумму делителей для sum1
+                int sum2 = 0;
+                for (int i = 1; i <= sum1 / 2; i++)
+                {
+                    if (sum1 % i == 0)
+                    {
+                        sum2 += i;
+                    }
+                }
+
+                // Проверяем дружественность и что пару еще не выводили
+                if (sum2 == num1 && !checkedPairs[num1, sum1] && !checkedPairs[sum1, num1])
+                {
+                    Console.WriteLine($"  {num1} и {sum1}");
+
+                    // Показываем делители для наглядности
+                    Console.Write($"    Делители {num1}: ");
+                    for (int i = 1; i <= num1 / 2; i++)
+                    {
+                        if (num1 % i == 0)
+                        {
+                            Console.Write($"{i} ");
+                        }
+                    }
+                    Console.WriteLine($"= {sum1}");
+
+                    Console.Write($"    Делители {sum1}: ");
+                    for (int i = 1; i <= sum1 / 2; i++)
+                    {
+                        if (sum1 % i == 0)
+                        {
+                            Console.Write($"{i} ");
+                        }
+                    }
+                    Console.WriteLine($"= {num1}");
+
+                    checkedPairs[num1, sum1] = true;
+                    checkedPairs[sum1, num1] = true;
+                    pairCount++;
+                }
+            }
+        }
+
+        if (pairCount == 0)
+        {
+            Console.WriteLine("  Дружественные числа не найдены");
+        }
+        else
+        {
+            Console.WriteLine($"\nВсего найдено пар: {pairCount}");
+        }
+    }
+
+    // Задача 5: Вычисление x^n
+    static void Task5()
+    {
+        Console.WriteLine("Задача 5: Вычислить x^n");
+        Console.Write("Введите основание x: ");
+
+        if (!double.TryParse(Console.ReadLine(), out double x))
+        {
+            Console.WriteLine("Ошибка: введите корректное число!");
+            return;
+        }
+
+        Console.Write("Введите степень n (натуральное число): ");
+
+        if (!int.TryParse(Console.ReadLine(), out int n) || n < 0)
+        {
+            Console.WriteLine("Ошибка: введите неотрицательное целое число!");
+            return;
+        }
+
+        double result = 1;
+
+        for (int i = 1; i <= n; i++)
+        {
+            result *= x;
+            Console.WriteLine($"Шаг {i}: {x}^{i} = {result}");
+        }
+
+        Console.WriteLine($"\nРезультат: {x}^{n} = {result}");
+
+        // Сравнение с Math.Pow
+        Console.WriteLine($"Для проверки: Math.Pow({x}, {n}) = {Math.Pow(x, n)}");
+    }
+
+    // Задача 6: Счастливые билеты
+    static void Task6()
+    {
+        Console.WriteLine("Задача 6: Вывести все номера счастливых билетов");
+        Console.WriteLine("Билет счастливый, если сумма первых 3 цифр равна сумме последних 3 цифр");
+
+        int count = 0;
+
+        for (int number = 0; number <= 999999; number++)
+        {
+            int firstPart = number / 1000; // первые 3 цифры
+            int secondPart = number % 1000; // последние 3 цифры
+
+            int sum1 = SumOfDigits(firstPart);
+            int sum2 = SumOfDigits(secondPart);
+
+            if (sum1 == sum2)
+            {
+                Console.Write($"{number:D6} ");
+                count++;
+
+                if (count % 10 == 0) // по 10 чисел в строке
+                {
+                    Console.WriteLine();
+                }
+            }
+        }
+
+        Console.WriteLine($"\n\nВсего счастливых билетов: {count}");
+        Console.WriteLine($"Вероятность выпадения счастливого билета: {(double)count / 1000000 * 100:F2}%");
+    }
+
+    // Задача 7: N-е число Фибоначчи
+    static void Task7()
+    {
+        Console.WriteLine("Задача 7: Найти n-е число Фибоначчи");
+        Console.WriteLine("F1 = F2 = 1, Fi = F(i-1) + F(i-2)");
+        Console.Write("Введите номер n (n >= 1): ");
+
+        if (!int.TryParse(Console.ReadLine(), out int n) || n < 1)
+        {
+            Console.WriteLine("Ошибка: введите натуральное число!");
+            return;
+        }
+
+        long fib1 = 0;
+        long fib2 = 1;
+        long fibN = 1;
+
+        if (n == 1)
+        {
+            fibN = 1;
+        }
+        else
+        {
+            for (int i = 2; i <= n; i++)
+            {
+                fibN = fib1 + fib2;
+                fib1 = fib2;
+                fib2 = fibN;
+
+                Console.WriteLine($"F{i} = {fibN}");
+            }
+        }
+
+        Console.WriteLine($"\nРезультат: F{n} = {fibN}");
+
+        // Выводим несколько предыдущих чисел для наглядности
+        Console.WriteLine($"Предыдущие числа: F{n - 1} = {fib1}, F{n - 2} = {fib1 - fibN + fib1}");
+    }
+
+    // Задача 8: Схема Горнера
+    static void Task8()
+    {
+        Console.WriteLine("Задача 8: Вычислить по схеме Горнера");
+        Console.WriteLine("y = x^10 + 2x^9 + 3x^8 + ... + 10x + 11");
+        Console.Write("Введите значение x: ");
+
+        if (!double.TryParse(Console.ReadLine(), out double x))
+        {
+            Console.WriteLine("Ошибка: введите корректное число!");
+            return;
+        }
+
+        // Схема Горнера: y = (((...((x+2)x+3)x+4)x+...)x+10)x+11
+        double result = 1; // коэффициент при x^10
+
+        for (int i = 2; i <= 11; i++)
+        {
+            result = result * x + i;
+            Console.WriteLine($"Шаг {i - 1}: результат = {result}");
+        }
+
+        Console.WriteLine($"\nРезультат по схеме Горнера: y = {result}");
+
+        // Проверка прямым вычислением
+        double check = Math.Pow(x, 10) + 2 * Math.Pow(x, 9) + 3 * Math.Pow(x, 8) +
+                      4 * Math.Pow(x, 7) + 5 * Math.Pow(x, 6) + 6 * Math.Pow(x, 5) +
+                      7 * Math.Pow(x, 4) + 8 * Math.Pow(x, 3) + 9 * Math.Pow(x, 2) +
+                      10 * x + 11;
+
+        Console.WriteLine($"Проверка прямым вычислением: y = {check}");
+        Console.WriteLine($"Разница: {Math.Abs(result - check)}");
+    }
+
+    // Вспомогательный метод для суммы цифр
+    static int SumOfDigits(int number)
+    {
+        int sum = 0;
+        for (int temp = number; temp > 0; temp /= 10)
+        {
+            sum += temp % 10;
+        }
+        return sum;
+    }
+}
