@@ -1,0 +1,641 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("=== ЗАДАЧИ НА МАССИВЫ ===");
+            Console.WriteLine("1. Проверка на возрастающую последовательность");
+            Console.WriteLine("2. Максимальная возрастающая подпоследовательность (подряд)");
+            Console.WriteLine("3. Максимальная симметричная подпоследовательность");
+            Console.WriteLine("4. Максимальная возрастающая подпоследовательность (не обязательно подряд)");
+            Console.WriteLine("5. Количество уникальных элементов (встречаются 1 раз)");
+            Console.WriteLine("6. Самый частый элемент");
+            Console.WriteLine("7. Количество различных элементов");
+            Console.WriteLine("8. 4 лучших спортсмена");
+            Console.WriteLine("9. Пересечение двух массивов");
+            Console.WriteLine("10. Проверка на множество");
+            Console.WriteLine("11. Равенство двух множеств");
+            Console.WriteLine("0. Выход");
+            Console.WriteLine("=========================");
+            Console.Write("Ваш выбор: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int choice))
+            {
+                Console.WriteLine("Ошибка ввода!");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (choice == 0) break;
+
+            Console.Clear();
+
+            switch (choice)
+            {
+                case 1:
+                    Task1();
+                    break;
+                case 2:
+                    Task2();
+                    break;
+                case 3:
+                    Task3();
+                    break;
+                case 4:
+                    Task4();
+                    break;
+                case 5:
+                    Task5();
+                    break;
+                case 6:
+                    Task6();
+                    break;
+                case 7:
+                    Task7();
+                    break;
+                case 8:
+                    Task8();
+                    break;
+                case 9:
+                    Task9();
+                    break;
+                case 10:
+                    Task10();
+                    break;
+                case 11:
+                    Task11();
+                    break;
+                default:
+                    Console.WriteLine("Неверный выбор!");
+                    break;
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для возврата в меню...");
+            Console.ReadKey();
+        }
+    }
+
+    // Задача 1: Проверка на возрастающую последовательность
+    static void Task1()
+    {
+        Console.WriteLine("Задача 1: Проверка, является ли массив возрастающей последовательностью");
+        int[] array = ReadArray();
+
+        if (array.Length < 2)
+        {
+            Console.WriteLine("Массив слишком короткий для проверки");
+            return;
+        }
+
+        bool isIncreasing = true;
+        for (int i = 1; i < array.Length; i++)
+        {
+            if (array[i] <= array[i - 1])
+            {
+                isIncreasing = false;
+                Console.WriteLine($"Нарушение на позиции {i}: {array[i - 1]} → {array[i]}");
+                break;
+            }
+        }
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine(isIncreasing ? "Массив является возрастающей последовательностью"
+                                      : "Массив НЕ является возрастающей последовательностью");
+    }
+
+    // Задача 2: Максимальная возрастающая подпоследовательность (подряд)
+    static void Task2()
+    {
+        Console.WriteLine("Задача 2: Найти максимальную возрастающую подпоследовательность (подряд идущие элементы)");
+        int[] array = ReadArray();
+
+        if (array.Length == 0)
+        {
+            Console.WriteLine("Массив пуст");
+            return;
+        }
+
+        int maxLength = 1;
+        int currentLength = 1;
+        int startIndex = 0;
+        int maxStartIndex = 0;
+
+        for (int i = 1; i < array.Length; i++)
+        {
+            if (array[i] > array[i - 1])
+            {
+                currentLength++;
+                if (currentLength > maxLength)
+                {
+                    maxLength = currentLength;
+                    maxStartIndex = startIndex;
+                }
+            }
+            else
+            {
+                currentLength = 1;
+                startIndex = i;
+            }
+        }
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Максимальная возрастающая подпоследовательность (подряд):");
+
+        int[] result = new int[maxLength];
+        Array.Copy(array, maxStartIndex, result, 0, maxLength);
+        Console.WriteLine($"[{string.Join(", ", result)}]");
+        Console.WriteLine($"Длина: {maxLength}, начинается с индекса {maxStartIndex}");
+    }
+
+    // Задача 3: Максимальная симметричная подпоследовательность
+    static void Task3()
+    {
+        Console.WriteLine("Задача 3: Найти максимальную симметричную подпоследовательность (палиндром)");
+        int[] array = ReadArray();
+
+        if (array.Length == 0)
+        {
+            Console.WriteLine("Массив пуст");
+            return;
+        }
+
+        int maxLength = 1;
+        int startIndex = 0;
+
+        // Проверяем все возможные подпоследовательности
+        for (int i = 0; i < array.Length; i++)
+        {
+            for (int j = i; j < array.Length; j++)
+            {
+                bool isPalindrome = true;
+                int length = j - i + 1;
+
+                // Проверяем, является ли подпоследовательность палиндромом
+                for (int k = 0; k < length / 2; k++)
+                {
+                    if (array[i + k] != array[j - k])
+                    {
+                        isPalindrome = false;
+                        break;
+                    }
+                }
+
+                if (isPalindrome && length > maxLength)
+                {
+                    maxLength = length;
+                    startIndex = i;
+                }
+            }
+        }
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Максимальная симметричная подпоследовательность:");
+
+        int[] result = new int[maxLength];
+        Array.Copy(array, startIndex, result, 0, maxLength);
+        Console.WriteLine($"[{string.Join(", ", result)}]");
+        Console.WriteLine($"Длина: {maxLength}, начинается с индекса {startIndex}");
+    }
+
+    // Задача 4: Максимальная возрастающая подпоследовательность (не обязательно подряд)
+    static void Task4()
+    {
+        Console.WriteLine("Задача 4: Найти максимальную возрастающую подпоследовательность (не обязательно подряд)");
+        int[] array = ReadArray();
+
+        if (array.Length == 0)
+        {
+            Console.WriteLine("Массив пуст");
+            return;
+        }
+
+        // Используем алгоритм поиска наибольшей возрастающей подпоследовательности
+        int[] dp = new int[array.Length];
+        int[] prev = new int[array.Length];
+
+        for (int i = 0; i < array.Length; i++)
+        {
+            dp[i] = 1;
+            prev[i] = -1;
+
+            for (int j = 0; j < i; j++)
+            {
+                if (array[j] < array[i] && dp[j] + 1 > dp[i])
+                {
+                    dp[i] = dp[j] + 1;
+                    prev[i] = j;
+                }
+            }
+        }
+
+        // Находим максимальную длину и её позицию
+        int maxLength = 0;
+        int maxIndex = 0;
+        for (int i = 0; i < dp.Length; i++)
+        {
+            if (dp[i] > maxLength)
+            {
+                maxLength = dp[i];
+                maxIndex = i;
+            }
+        }
+
+        // Восстанавливаем подпоследовательность
+        List<int> result = new List<int>();
+        int current = maxIndex;
+        while (current != -1)
+        {
+            result.Add(array[current]);
+            current = prev[current];
+        }
+        result.Reverse();
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Максимальная возрастающая подпоследовательность (не обязательно подряд):");
+        Console.WriteLine($"[{string.Join(", ", result)}]");
+        Console.WriteLine($"Длина: {maxLength}");
+    }
+
+    // Задача 5: Количество уникальных элементов (встречаются 1 раз)
+    static void Task5()
+    {
+        Console.WriteLine("Задача 5: Найти количество элементов, встречающихся ровно 1 раз");
+        int[] array = ReadArray();
+
+        Dictionary<int, int> frequency = new Dictionary<int, int>();
+
+        // Подсчитываем частоту каждого элемента
+        foreach (int num in array)
+        {
+            if (frequency.ContainsKey(num))
+                frequency[num]++;
+            else
+                frequency[num] = 1;
+        }
+
+        // Считаем элементы с частотой 1
+        int uniqueCount = 0;
+        List<int> uniqueElements = new List<int>();
+        foreach (var pair in frequency)
+        {
+            if (pair.Value == 1)
+            {
+                uniqueCount++;
+                uniqueElements.Add(pair.Key);
+            }
+        }
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Количество элементов, встречающихся 1 раз: {uniqueCount}");
+
+        if (uniqueCount > 0)
+        {
+            Console.WriteLine("Эти элементы:");
+            Console.WriteLine(string.Join(" ", uniqueElements));
+        }
+    }
+
+    // Задача 6: Самый частый элемент
+    static void Task6()
+    {
+        Console.WriteLine("Задача 6: Найти элемент, который встречается максимальное число раз");
+        int[] array = ReadArray();
+
+        if (array.Length == 0)
+        {
+            Console.WriteLine("Массив пуст");
+            return;
+        }
+
+        Dictionary<int, int> frequency = new Dictionary<int, int>();
+
+        foreach (int num in array)
+        {
+            if (frequency.ContainsKey(num))
+                frequency[num]++;
+            else
+                frequency[num] = 1;
+        }
+
+        // Находим максимальную частоту
+        int maxFrequency = 0;
+        foreach (var freq in frequency.Values)
+        {
+            if (freq > maxFrequency)
+                maxFrequency = freq;
+        }
+
+        List<int> mostFrequent = new List<int>();
+        foreach (var pair in frequency)
+        {
+            if (pair.Value == maxFrequency)
+                mostFrequent.Add(pair.Key);
+        }
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Максимальная частота: {maxFrequency}");
+
+        if (mostFrequent.Count == 1)
+        {
+            Console.WriteLine($"Самый частый элемент: {mostFrequent[0]}");
+        }
+        else
+        {
+            Console.WriteLine($"Самые частые элементы (встречаются {maxFrequency} раз):");
+            Console.WriteLine(string.Join(", ", mostFrequent));
+        }
+    }
+
+    // Задача 7: Количество различных элементов
+    static void Task7()
+    {
+        Console.WriteLine("Задача 7: Найти количество различных элементов в массиве");
+        int[] array = ReadArray();
+
+        HashSet<int> uniqueElements = new HashSet<int>();
+        foreach (int num in array)
+        {
+            uniqueElements.Add(num);
+        }
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Количество различных элементов: {uniqueElements.Count}");
+
+        // Сортируем элементы для красивого вывода
+        List<int> sortedElements = new List<int>(uniqueElements);
+        sortedElements.Sort();
+        Console.WriteLine($"Различные элементы: {string.Join(", ", sortedElements)}");
+    }
+
+    // Задача 8: 4 лучших спортсмена
+    static void Task8()
+    {
+        Console.WriteLine("Задача 8: Выбрать 4 лучших спортсмена (наименьшее время)");
+        Console.WriteLine("Введите результаты забега (в секундах):");
+
+        double[] times = ReadDoubleArray();
+
+        if (times.Length < 4)
+        {
+            Console.WriteLine($"Для формирования команды нужно минимум 4 спортсмена, а введено: {times.Length}");
+            return;
+        }
+
+        // Сортируем по возрастанию времени
+        double[] sortedTimes = new double[times.Length];
+        Array.Copy(times, sortedTimes, times.Length);
+        Array.Sort(sortedTimes);
+
+        // Берем первые 4 результата
+        double[] bestTimes = new double[4];
+        Array.Copy(sortedTimes, bestTimes, 4);
+
+        Console.WriteLine($"\nВсе результаты: [{string.Join(", ", times)}] сек");
+        Console.WriteLine($"4 лучших результата: [{string.Join(", ", bestTimes)}] сек");
+        Console.WriteLine($"Команда будет составлена из спортсменов с этими результатами");
+    }
+
+    // Задача 9: Пересечение двух массивов
+    static void Task9()
+    {
+        Console.WriteLine("Задача 9: Найти количество элементов первого массива, которые есть во втором");
+
+        Console.WriteLine("Первый массив:");
+        int[] array1 = ReadArray();
+
+        Console.WriteLine("\nВторой массив:");
+        int[] array2 = ReadArray();
+
+        HashSet<int> set2 = new HashSet<int>();
+        foreach (int num in array2)
+        {
+            set2.Add(num);
+        }
+
+        int count = 0;
+        HashSet<int> intersection = new HashSet<int>();
+
+        foreach (int num in array1)
+        {
+            if (set2.Contains(num))
+            {
+                count++;
+                intersection.Add(num);
+            }
+        }
+
+        Console.WriteLine($"\nПервый массив: [{string.Join(", ", array1)}]");
+        Console.WriteLine($"Второй массив: [{string.Join(", ", array2)}]");
+        Console.WriteLine($"Количество элементов первого массива, которые есть во втором: {count}");
+
+        if (intersection.Count > 0)
+        {
+            List<int> sortedIntersection = new List<int>(intersection);
+            sortedIntersection.Sort();
+            Console.WriteLine($"Общие элементы: {string.Join(", ", sortedIntersection)}");
+        }
+    }
+
+    // Задача 10: Проверка на множество
+    static void Task10()
+    {
+        Console.WriteLine("Задача 10: Проверить, образуют ли элементы массива множество (все элементы уникальны)");
+        int[] array = ReadArray();
+
+        HashSet<int> uniqueElements = new HashSet<int>();
+        foreach (int num in array)
+        {
+            uniqueElements.Add(num);
+        }
+
+        bool isSet = uniqueElements.Count == array.Length;
+
+        Console.WriteLine($"\nМассив: [{string.Join(", ", array)}]");
+        Console.WriteLine($"Количество элементов: {array.Length}");
+        Console.WriteLine($"Количество уникальных элементов: {uniqueElements.Count}");
+
+        if (isSet)
+        {
+            Console.WriteLine("Массив образует множество (все элементы уникальны)");
+        }
+        else
+        {
+            Console.WriteLine("Массив НЕ образует множество (есть повторяющиеся элементы)");
+
+            // Находим дубликаты
+            Dictionary<int, int> frequency = new Dictionary<int, int>();
+            foreach (int num in array)
+            {
+                if (frequency.ContainsKey(num))
+                    frequency[num]++;
+                else
+                    frequency[num] = 1;
+            }
+
+            Console.WriteLine("Повторяющиеся элементы:");
+            foreach (var pair in frequency)
+            {
+                if (pair.Value > 1)
+                    Console.WriteLine($"  {pair.Key} встречается {pair.Value} раз");
+            }
+        }
+    }
+
+    // Задача 11: Равенство двух множеств
+    static void Task11()
+    {
+        Console.WriteLine("Задача 11: Проверить, равны ли два множества");
+
+        Console.WriteLine("Первое множество (массив):");
+        int[] array1 = ReadArray();
+
+        Console.WriteLine("\nВторое множество (массив):");
+        int[] array2 = ReadArray();
+
+        HashSet<int> set1 = new HashSet<int>();
+        foreach (int num in array1)
+        {
+            set1.Add(num);
+        }
+
+        HashSet<int> set2 = new HashSet<int>();
+        foreach (int num in array2)
+        {
+            set2.Add(num);
+        }
+
+        bool areEqual = true;
+
+        // Проверяем, что все элементы из set1 есть в set2
+        foreach (int num in set1)
+        {
+            if (!set2.Contains(num))
+            {
+                areEqual = false;
+                break;
+            }
+        }
+
+        // Если до сих пор равны, проверяем обратное
+        if (areEqual)
+        {
+            foreach (int num in set2)
+            {
+                if (!set1.Contains(num))
+                {
+                    areEqual = false;
+                    break;
+                }
+            }
+        }
+
+        Console.WriteLine($"\nПервое множество: [{string.Join(", ", array1)}]");
+        List<int> sortedSet1 = new List<int>(set1);
+        sortedSet1.Sort();
+        Console.WriteLine($"Уникальные элементы: {string.Join(", ", sortedSet1)}");
+
+        Console.WriteLine($"\nВторое множество: [{string.Join(", ", array2)}]");
+        List<int> sortedSet2 = new List<int>(set2);
+        sortedSet2.Sort();
+        Console.WriteLine($"Уникальные элементы: {string.Join(", ", sortedSet2)}");
+
+        if (areEqual)
+        {
+            Console.WriteLine("\nМножества РАВНЫ (содержат одинаковые элементы)");
+        }
+        else
+        {
+            Console.WriteLine("\nМножества НЕ РАВНЫ");
+
+            // Находим различия
+            List<int> onlyInFirst = new List<int>();
+            foreach (int num in set1)
+            {
+                if (!set2.Contains(num))
+                    onlyInFirst.Add(num);
+            }
+
+            List<int> onlyInSecond = new List<int>();
+            foreach (int num in set2)
+            {
+                if (!set1.Contains(num))
+                    onlyInSecond.Add(num);
+            }
+
+            if (onlyInFirst.Count > 0)
+            {
+                onlyInFirst.Sort();
+                Console.WriteLine($"Элементы только в первом множестве: {string.Join(", ", onlyInFirst)}");
+            }
+
+            if (onlyInSecond.Count > 0)
+            {
+                onlyInSecond.Sort();
+                Console.WriteLine($"Элементы только во втором множестве: {string.Join(", ", onlyInSecond)}");
+            }
+        }
+    }
+
+    // Вспомогательные методы для ввода массивов
+    static int[] ReadArray()
+    {
+        Console.WriteLine("Введите элементы массива через пробел:");
+        string input = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(input))
+            return new int[0];
+
+        try
+        {
+            // Разбиваем строку по пробелам, удаляем пустые элементы
+            string[] parts = input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Преобразуем в числа
+            int[] array = new int[parts.Length];
+            for (int i = 0; i < parts.Length; i++)
+            {
+                array[i] = int.Parse(parts[i]);
+            }
+            return array;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Ошибка при чтении массива. Используйте целые числа, разделенные пробелами.");
+            return new int[0];
+        }
+    }
+
+    static double[] ReadDoubleArray()
+    {
+        Console.WriteLine("Введите элементы массива через пробел:");
+        string input = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(input))
+            return new double[0];
+
+        try
+        {
+            // Разбиваем строку по пробелам, удаляем пустые элементы
+            string[] parts = input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Преобразуем в числа
+            double[] array = new double[parts.Length];
+            for (int i = 0; i < parts.Length; i++)
+            {
+                array[i] = double.Parse(parts[i]);
+            }
+            return array;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Ошибка при чтении массива. Используйте числа, разделенные пробелами.");
+            return new double[0];
+        }
+    }
+}
