@@ -33,13 +33,13 @@ class Program
             switch (choice)
             {
                 case 1:
-                    CheckDigitInNumber();
+                    task1();
                     break;
                 case 2:
-                    ReverseNumber();
+                    task2();
                     break;
                 case 3:
-                    CheckFibonacciNumber();
+                    task3();
                     break;
                 default:
                     Console.WriteLine("Неверный выбор! Введите число от 0 до 3.");
@@ -54,7 +54,7 @@ class Program
     }
 
     // Задача 1: Проверка вхождения цифры в число
-    static void CheckDigitInNumber()
+    static void task1()
     {
         Console.WriteLine("=== Проверка вхождения цифры в число ===");
         Console.WriteLine("Введите целое число:");
@@ -112,7 +112,7 @@ class Program
     }
 
     // Задача 2: Перевернуть число
-    static void ReverseNumber()
+    static void task2()
     {
         Console.WriteLine("=== Перевернуть число ===");
         Console.WriteLine("Введите целое число:");
@@ -152,7 +152,7 @@ class Program
     }
 
     // Задача 3: Проверка на число Фибоначчи
-    static void CheckFibonacciNumber()
+    static void task3()
     {
         Console.WriteLine("=== Проверка на число Фибоначчи ===");
         Console.WriteLine("Введите целое неотрицательное число:");
